@@ -8,6 +8,17 @@ from setuptools import setup
 
 
 def get_content(*fps):
+    """Return content for specified file path parts.
+
+    If the file doesn't exist, return ''.
+
+    Arguments:
+        fps (List(str)): One or more path parts to be joined with
+            current directory
+
+    Returns:
+        str: Content of the specified file, otherwise ''.
+    """
     fp = Path(__file__).parent.joinpath(*fps)
     content = ''
     if fp.exists():
@@ -17,13 +28,17 @@ def get_content(*fps):
 
 
 def get_requirements():
+    """Return list of requirements from `requirements/app.in`.
+
+    Returns:
+        List(str)
+    """
     reqs = get_content('requirements/app.in').splitlines()
     return reqs
 
 
 def get_version(*file_paths):
-    """
-    Extract the version string from the file at the given path fragments.
+    """Extract the version string from the file at the given path fragments.
     """
     version_file = get_content(*file_paths)
     version_match = re.search(
