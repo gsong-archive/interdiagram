@@ -1,0 +1,10 @@
+<<TABLE>
+  <TR>
+    <TD PORT="0">{{ node.name }}</TD>
+  </TR>
+  {% for action in node.actions %}
+  <TR>
+    <TD PORT="{{ loop.index }}">{{ action.name }}</TD>
+  </TR>
+  {% endfor %}
+</TABLE>>

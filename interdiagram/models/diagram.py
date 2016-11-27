@@ -2,6 +2,10 @@
 
 from typing import Dict, TYPE_CHECKING
 
+from htmlmin import minify
+from jinja2 import Environment, PackageLoader
+from pygraphviz import AGraph
+
 from .node import Component, Section
 
 if TYPE_CHECKING:
@@ -37,15 +41,23 @@ class Diagram:
             self,
             output_file: str
     ) -> None:
-        for c in self.components.values():
-            print(
-                c.name, [(a.name, a.targets) for a in c.actions], c.components
-            )
+        env = Environment(
+            loader=PackageLoader('interdiagram', 'templates'),
+            lstrip_blocks=True,
+            trim_blocks=True
+        )
+        template = env.get_template('node.dot')
 
-        for c in self.sections.values():
-            print(
-                c.name, [(a.name, a.targets) for a in c.actions], c.components
+        G = AGraph(directed=True, strict=False, rankdir='LR')
+        for c in self.all_components.values():
+            label = minify(
+                template.render(node=c),
+                remove_empty_space=True,
+                remove_optional_attribute_quotes=False
             )
+            G.add_node(c.name, label=label, shape='none')
+        G.draw(output_file, prog='dot')
+        G.write()
 
     def process_spec(
             self,

@@ -5,6 +5,7 @@
 #    pip-compile --output-file requirements/app.txt requirements/app.in
 #
 click==6.6
+htmlmin==0.1.10
 Jinja2==2.8
 MarkupSafe==0.23          # via jinja2
 pathlib==1.0.1
