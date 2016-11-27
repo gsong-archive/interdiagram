@@ -5,15 +5,17 @@ from tempfile import gettempdir
 
 from click.testing import CliRunner
 
-from interdiagram.bin.interdiagram import Diagram, cli
+from interdiagram.bin.interdiagram import cli
 
 OUTPUT = Path(gettempdir()).resolve().joinpath('o.pdf').as_posix()
 
 
 def test_cli(input1, input2, input1_data, input2_data, mocker):
     runner = CliRunner()
-    mock_process_spec = mocker.patch.object(Diagram, 'process_spec')
-    mock_draw = mocker.patch.object(Diagram, 'draw')
+    mock_process_spec = mocker.patch(
+        'interdiagram.bin.interdiagram.Diagram.process_spec'
+    )
+    mock_draw = mocker.patch('interdiagram.bin.interdiagram.Diagram.draw')
 
     args = [input1, input2, OUTPUT]
     result = runner.invoke(cli, args)

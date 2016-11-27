@@ -1,24 +1,24 @@
 # -*- coding: utf-8 -*-
 
-from typing import Dict, List, TYPE_CHECKING, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
     from .diagram import Diagram  # noqa: F401
 
-LooseComponent = Union[str, 'BaseComponent']
+LooseNode = Union[str, 'Node']
 
 
-def _map_list_to_components(
+def _map_list_to_nodes(
         source: List[str],
-        all_components: Dict[str, 'BaseComponent']
-) -> List[LooseComponent]:
-        components = []  # type: List[LooseComponent]
+        all_nodes: Dict[str, 'Node']
+) -> List[LooseNode]:
+        nodes = []  # type: List[LooseNode]
         for c in source:
-            if c in all_components:
-                components.append(all_components[c])
+            if c in all_nodes:
+                nodes.append(all_nodes[c])
             else:
-                components.append(c)
-        return components
+                nodes.append(c)
+        return nodes
 
 
 class Action:
@@ -26,17 +26,17 @@ class Action:
             self,
             spec: Dict[str, List[str]],
             port: int,
-            component: 'BaseComponent'
+            node: 'Node'
     ) -> None:
         self.name, self._targets = list(spec.items())[0]
         self._targets = self._targets or []
         self.port = port
-        self.component = component
+        self.node = node
 
     @property
-    def targets(self) -> List[LooseComponent]:
-        targets = _map_list_to_components(
-            self._targets, self.component.parent.all_components
+    def targets(self) -> List[LooseNode]:
+        targets = _map_list_to_nodes(
+            self._targets, self.node.diagram.all_nodes
         )
         return targets
 
@@ -45,16 +45,33 @@ class Action:
         return output
 
 
-class BaseComponent:
+class Part:
+    def __init__(
+            self,
+            spec: Dict[str, List[str]],
+            node: 'Node'
+    ) -> None:
+        self.name, self._target = list(spec.items())[0]
+        self.node = node
+
+    @property
+    def target(self) -> LooseNode:
+        target = _map_list_to_nodes(
+            [self._target], self.node.diagram.all_nodes
+        )[0]
+        return target
+
+
+class Node:
     def __init__(
             self,
             name: str,
-            spec: Dict,
-            parent: 'Diagram'
+            spec: Optional[Dict],
+            diagram: 'Diagram'
     ) -> None:
-        self._spec = spec
+        self._spec = spec or {}
         self.name = name
-        self.parent = parent
+        self.diagram = diagram
 
     @property
     def actions(self) -> List['Action']:
@@ -64,11 +81,11 @@ class BaseComponent:
         return actions
 
     @property
-    def components(self) -> List[LooseComponent]:
-        components = _map_list_to_components(
-            self._spec.get('components', []), self.parent.all_components
-        )
-        return components
+    def parts(self) -> List[LooseNode]:
+        parts = []
+        for spec in self._spec.get('parts', []):
+            parts.append(Part(spec, self))
+        return parts
 
     def render(self) -> str:
         name = '<TR><TD PORT="0">{}</TD></TR>'.format(self.name)
@@ -77,9 +94,9 @@ class BaseComponent:
         return output
 
 
-class Component(BaseComponent):
+class Component(Node):
     pass
 
 
-class Section(BaseComponent):
+class Section(Node):
     pass

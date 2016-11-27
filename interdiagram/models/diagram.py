@@ -7,7 +7,7 @@ from pygraphviz import AGraph
 from .node import Component, Section
 
 if TYPE_CHECKING:
-    from .node import BaseComponent  # noqa: F401
+    from .node import Node  # noqa: F401
 
 
 class Diagram:
@@ -30,7 +30,7 @@ class Diagram:
         self.sections[name] = Section(name, spec, self)
 
     @property
-    def all_components(self) -> Dict[str, 'BaseComponent']:
+    def all_nodes(self) -> Dict[str, 'Node']:
         all = dict(self.sections)
         all.update(self.components)
         return all
@@ -40,8 +40,8 @@ class Diagram:
             output_file: str
     ) -> None:  # pragma: no cover
         G = AGraph(directed=True, strict=False, rankdir='LR')
-        for component in self.all_components.values():
-            G.add_node(component.name, label=component.render(), shape='none')
+        for node in self.all_nodes.values():
+            G.add_node(node.name, label=node.render(), shape='none')
         G.draw(output_file, prog='dot')
         G.write()
 

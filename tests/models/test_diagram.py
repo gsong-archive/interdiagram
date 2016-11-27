@@ -29,7 +29,7 @@ def test_add_component(diagram):
     assert 'c1' in diagram.components
     assert component.name == 'c1'
     assert component._spec == {}
-    assert component.parent == diagram
+    assert component.diagram == diagram
 
 
 def test_add_section(diagram):
@@ -38,14 +38,14 @@ def test_add_section(diagram):
     assert 'c1' in diagram.sections
     assert section.name == 'c1'
     assert section._spec == {}
-    assert section.parent == diagram
+    assert section.diagram == diagram
 
 
-def test_all_components(diagram):
+def test_all_nodes(diagram):
     diagram.sections = {'a': 1}
     diagram.components = {'b': 2}
     expected = {'a': 1, 'b': 2}
-    assert diagram.all_components == expected
+    assert diagram.all_nodes == expected
 
 
 class TestProcessSpec:
