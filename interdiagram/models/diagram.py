@@ -2,8 +2,6 @@
 
 from typing import Dict, TYPE_CHECKING
 
-from htmlmin import minify
-from jinja2 import Environment, PackageLoader
 from pygraphviz import AGraph
 
 from .node import Component, Section
@@ -41,21 +39,9 @@ class Diagram:
             self,
             output_file: str
     ) -> None:
-        env = Environment(
-            loader=PackageLoader('interdiagram', 'templates'),
-            lstrip_blocks=True,
-            trim_blocks=True
-        )
-        template = env.get_template('node.dot')
-
         G = AGraph(directed=True, strict=False, rankdir='LR')
-        for c in self.all_components.values():
-            label = minify(
-                template.render(node=c),
-                remove_empty_space=True,
-                remove_optional_attribute_quotes=False
-            )
-            G.add_node(c.name, label=label, shape='none')
+        for component in self.all_components.values():
+            G.add_node(component.name, label=component.render(), shape='none')
         G.draw(output_file, prog='dot')
         G.write()
 

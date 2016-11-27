@@ -24,10 +24,13 @@ def _map_list_to_components(
 class Action:
     def __init__(
             self,
-            spec: str,
+            spec: Dict[str, List[str]],
+            port: int,
             component: 'BaseComponent'
     ) -> None:
-        self.name, *self._targets = spec.split('::')
+        self.name, self._targets = list(spec.items())[0]
+        self._targets = self._targets or []
+        self.port = port
         self.component = component
 
     @property
@@ -36,6 +39,10 @@ class Action:
             self._targets, self.component.parent.all_components
         )
         return targets
+
+    def render(self) -> str:
+        output = '<TR><TD PORT="{0.port}">{0.name}</TD></TR>'.format(self)
+        return output
 
 
 class BaseComponent:
@@ -51,7 +58,9 @@ class BaseComponent:
 
     @property
     def actions(self) -> List['Action']:
-        actions = [Action(a, self) for a in self._spec.get('actions', [])]
+        actions = []
+        for i, spec in enumerate(self._spec.get('actions', []), start=1):
+            actions.append(Action(spec, i, self))
         return actions
 
     @property
@@ -60,6 +69,12 @@ class BaseComponent:
             self._spec.get('components', []), self.parent.all_components
         )
         return components
+
+    def render(self) -> str:
+        name = '<TR><TD PORT="0">{}</TD></TR>'.format(self.name)
+        actions = ''.join([a.render() for a in self.actions])
+        output = '<<TABLE>{}{}</TABLE>>'.format(name, actions)
+        return output
 
 
 class Component(BaseComponent):
