@@ -6,6 +6,8 @@ sections:
         - Home
       - Sign up:
         - Sign Up
+      - Foo:
+        - Bar
 
   Sign Up:
     actions:

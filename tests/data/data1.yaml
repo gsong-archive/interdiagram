@@ -2,7 +2,8 @@ components:
   Experience Card:
     actions:
       - Go to detail:
-      - Add to registry:
+
+  Footer:
 
 sections:
   Home:

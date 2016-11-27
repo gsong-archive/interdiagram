@@ -38,7 +38,7 @@ class Diagram:
     def draw(
             self,
             output_file: str
-    ) -> None:
+    ) -> None:  # pragma: no cover
         G = AGraph(directed=True, strict=False, rankdir='LR')
         for component in self.all_components.values():
             G.add_node(component.name, label=component.render(), shape='none')
@@ -49,7 +49,7 @@ class Diagram:
             self,
             spec: Dict
     ) -> None:
-        for k, v in spec['components'].items():
+        for k, v in spec.get('components', {}).items():
             self.add_component(k, v)
-        for k, v in spec['sections'].items():
+        for k, v in spec.get('sections', {}).items():
             self.add_section(k, v)
