@@ -1,0 +1,5 @@
+[report]
+exclude_lines =
+  noqa: F401
+  pragma: no cover
+  if.*__name__.*==.*['"]__main__['"]

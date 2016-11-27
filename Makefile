@@ -16,6 +16,21 @@ pip-compile:
 	pip install -q pip-tools
 	pip-compile -U requirements/app.in
 	pip-compile -U requirements/dev.in
+	pip-compile -U requirements/app.in requirements/test.in \
+		-o requirements/test.txt
 ifneq (, $(wildcard $(LOCAL_IN)))
 	pip-compile -U $(LOCAL_IN)
 endif
+
+
+test:
+	mypy interdiagram
+	py.test --cov=interdiagram
+
+
+test-html-coverage-report:
+	py.test --cov=interdiagram --cov-report=html
+
+
+test-html-coverage-report-open: test-html-coverage-report
+	open htmlcov/index.html

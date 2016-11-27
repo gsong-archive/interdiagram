@@ -1,0 +1,4 @@
+mypy-lang
+pytest
+pytest-cov
+pytest-mock

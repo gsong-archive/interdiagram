@@ -1,0 +1,16 @@
+sections:
+  Login:
+    actions:
+      - Login:
+      - Cancel:
+        - Home
+      - Sign up:
+        - Sign Up
+
+  Sign Up:
+    actions:
+      - Sign up:
+        - Email User
+        - Login
+      - Cancel:
+        - Home

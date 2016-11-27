@@ -1,0 +1,17 @@
+components:
+  Experience Card:
+    actions:
+      - Go to detail:
+      - Add to registry:
+
+sections:
+  Home:
+    actions:
+      - Sign up:
+        - Sign Up
+      - Login:
+        - Login
+      - Search for registry:
+    components:
+      - Experience cards:
+        - Experience Card
