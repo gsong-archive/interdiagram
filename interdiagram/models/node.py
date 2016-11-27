@@ -48,7 +48,7 @@ class Action:
 class Part:
     def __init__(
             self,
-            spec: Dict[str, List[str]],
+            spec: Dict[str, str],
             node: 'Node'
     ) -> None:
         self.name, self._target = list(spec.items())[0]
@@ -81,7 +81,7 @@ class Node:
         return actions
 
     @property
-    def parts(self) -> List[LooseNode]:
+    def parts(self) -> List[Part]:
         parts = []
         for spec in self._spec.get('parts', []):
             parts.append(Part(spec, self))
