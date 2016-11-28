@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from functools import lru_cache
 from typing import (
     Callable, Dict, List, Optional, TYPE_CHECKING, TypeVar, Union
 )
@@ -76,9 +75,11 @@ class Node:
             spec: Optional[Dict],
             diagram: 'Diagram'
     ) -> None:
+        self._actions = None  # type: Optional[List[Action]]
+        self._parts = None  # type: Optional[List[Part]]
         self._spec = spec or {}
-        self.name = name
         self.diagram = diagram
+        self.name = name
         self.next_port = 1
 
     def __str__(self) -> str:
@@ -97,22 +98,24 @@ class Node:
             self.next_port += 1
         return objs
 
-    @property  # type: ignore
-    @lru_cache(maxsize=None)
+    @property
     def actions(self) -> List['Action']:
-        actions = self._generate_list('actions', Action)
-        return actions
+        if getattr(self, '_actions', None) is not None:
+            return self._actions
+        self._actions = self._generate_list('actions', Action)
+        return self._actions
 
-    @property  # type: ignore
-    @lru_cache(maxsize=None)
+    @property
     def parts(self) -> List[Part]:
-        parts = self._generate_list('parts', Part)
-        return parts
+        if getattr(self, '_parts', None) is not None:
+            return self._parts
+        self._parts = self._generate_list('parts', Part)
+        return self._parts
 
     def render(self) -> str:
         name = '<TR><TD PORT="0">{}</TD></TR>'.format(self.name)
-        actions = ''.join([a.render() for a in self.actions])  # type: ignore
-        parts = ''.join([a.render() for a in self.parts])  # type: ignore
+        actions = ''.join([a.render() for a in self.actions])
+        parts = ''.join([a.render() for a in self.parts])
         output = '<<TABLE>{name}{parts}{actions}</TABLE>>'.format(**locals())
         return output
 
