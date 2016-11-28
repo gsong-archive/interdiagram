@@ -23,14 +23,17 @@ ifneq (, $(wildcard $(LOCAL_IN)))
 endif
 
 
-test:
-	mypy interdiagram
+test: type-check
 	py.test --cov=interdiagram
 
 
-test-html-coverage-report:
+test-html-coverage-report: type-check
 	py.test --cov=interdiagram --cov-report=html
 
 
 test-html-coverage-report-open: test-html-coverage-report
 	open htmlcov/index.html
+
+
+type-check:
+	mypy interdiagram
