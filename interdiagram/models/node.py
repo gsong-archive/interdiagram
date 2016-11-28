@@ -111,8 +111,8 @@ class Node:
 
     def render(self) -> str:
         name = '<TR><TD PORT="0">{}</TD></TR>'.format(self.name)
-        actions = ''.join([a.render() for a in self.actions])
-        parts = ''.join([a.render() for a in self.parts])
+        actions = ''.join([a.render() for a in self.actions])  # type: ignore
+        parts = ''.join([a.render() for a in self.parts])  # type: ignore
         output = '<<TABLE>{name}{parts}{actions}</TABLE>>'.format(**locals())
         return output
 

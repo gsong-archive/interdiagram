@@ -9,10 +9,15 @@ class MockAction:
 
 
 def test_init():
-    c = Node('a', 'b', 'c')
+    c = Node('a', None, 'c')
     assert c.name == 'a'
-    assert c._spec == 'b'
+    assert c._spec == {}
     assert c.diagram == 'c'
+
+
+def test_str():
+    c = Node('a', None, 'c')
+    assert str(c) == 'a'
 
 
 class TestActions:
@@ -64,7 +69,7 @@ class TestParts:
         expected_target = diagram.components['Footer']
         assert len(c.parts) == 2
         assert c1.name == 'Bios'
-        assert c1.target is None
+        assert c1.target == 'Bios'
         assert c2.name == 'Footer'
         assert c2.target == expected_target
 
