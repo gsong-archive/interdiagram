@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from functools import lru_cache
+from typing import (
+    Callable, Dict, List, Optional, TYPE_CHECKING, TypeVar, Union
+)
 
 if TYPE_CHECKING:
     from .diagram import Diagram  # noqa: F401
 
 LooseNode = Union[str, 'Node']
+NodeAttr = TypeVar('NodeAttr', 'Action', 'Part')
 
 
 def _map_list_to_nodes(
@@ -21,10 +25,10 @@ def _map_list_to_nodes(
         return nodes
 
 
-class Action:
+class NodeAttribute:
     def __init__(
             self,
-            spec: Dict[str, List[str]],
+            spec: Dict,
             port: int,
             node: 'Node'
     ) -> None:
@@ -33,6 +37,12 @@ class Action:
         self.port = port
         self.node = node
 
+    def render(self) -> str:
+        output = '<TR><TD PORT="{0.port}">{0.name}</TD></TR>'.format(self)
+        return output
+
+
+class Action(NodeAttribute):
     @property
     def targets(self) -> List[LooseNode]:
         targets = _map_list_to_nodes(
@@ -40,19 +50,16 @@ class Action:
         )
         return targets
 
-    def render(self) -> str:
-        output = '<TR><TD PORT="{0.port}">{0.name}</TD></TR>'.format(self)
-        return output
 
-
-class Part:
+class Part(NodeAttribute):
     def __init__(
             self,
             spec: Dict[str, str],
+            port: int,
             node: 'Node'
     ) -> None:
-        self.name, self._target = list(spec.items())[0]
-        self.node = node
+        super().__init__(spec, port, node)
+        self._target = self._targets or self.name
 
     @property
     def target(self) -> LooseNode:
@@ -72,25 +79,41 @@ class Node:
         self._spec = spec or {}
         self.name = name
         self.diagram = diagram
+        self.next_port = 1
 
-    @property
+    def __str__(self) -> str:
+        return self.name
+
+    def _generate_list(
+            self,
+            key: str,
+            klass: Callable[..., NodeAttr]
+    ) -> List[NodeAttr]:
+        objs = []
+        for i, spec in enumerate(
+                self._spec.get(key, []), start=self.next_port
+        ):
+            objs.append(klass(spec, i, self))
+            self.next_port += 1
+        return objs
+
+    @property  # type: ignore
+    @lru_cache(maxsize=None)
     def actions(self) -> List['Action']:
-        actions = []
-        for i, spec in enumerate(self._spec.get('actions', []), start=1):
-            actions.append(Action(spec, i, self))
+        actions = self._generate_list('actions', Action)
         return actions
 
-    @property
+    @property  # type: ignore
+    @lru_cache(maxsize=None)
     def parts(self) -> List[Part]:
-        parts = []
-        for spec in self._spec.get('parts', []):
-            parts.append(Part(spec, self))
+        parts = self._generate_list('parts', Part)
         return parts
 
     def render(self) -> str:
         name = '<TR><TD PORT="0">{}</TD></TR>'.format(self.name)
         actions = ''.join([a.render() for a in self.actions])
-        output = '<<TABLE>{}{}</TABLE>>'.format(name, actions)
+        parts = ''.join([a.render() for a in self.parts])
+        output = '<<TABLE>{name}{parts}{actions}</TABLE>>'.format(**locals())
         return output
 
 

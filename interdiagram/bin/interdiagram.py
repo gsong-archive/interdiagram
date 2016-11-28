@@ -11,6 +11,7 @@ from ..models import Diagram
 click.disable_unicode_literals_warning = True
 
 
+# TODO: Correct documentation schema once it's frozen
 @click.command()
 @click.argument('yaml-file', nargs=-1, type=click.File())
 @click.argument('output-file', type=click.Path(resolve_path=True))
@@ -44,6 +45,7 @@ def cli(
     """
     diagram = Diagram()
     for f in yaml_file:
+        # TODO: Validate against schema
         diagram.process_spec(yaml.load(f))
     diagram.draw(output_file)
 
