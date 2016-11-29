@@ -69,7 +69,7 @@ class TestParts:
         expected_target = diagram.components['Footer']
         assert len(c.parts) == 2
         assert c1.name == 'Bios'
-        assert c1.target == 'Bios'
+        assert c1.target is None
         assert c2.name == 'Footer'
         assert c2.target == expected_target
 

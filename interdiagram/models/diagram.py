@@ -1,10 +1,22 @@
 # -*- coding: utf-8 -*-
 
-from typing import Dict
+from typing import Dict, Union
 
 from pygraphviz import AGraph
 
 from .node import Component, Node, Section
+
+
+def add_edge(
+        graph: 'AGraph',
+        source: str,
+        target: Union['Node', str],
+        tailport: int
+) -> None:
+    opts = dict(tailport=tailport)
+    if isinstance(target, Node):
+        opts['headport'] = 0
+    graph.add_edge(source, str(target), **opts)
 
 
 def add_edges(
@@ -14,16 +26,11 @@ def add_edges(
     for node in diagram.all_nodes.values():
         for action in node.actions:
             for target in action.targets:
-                opts = dict(tailport=action.port)
-                if isinstance(target, Node):
-                    opts['headport'] = 0
-                graph.add_edge(node.name, str(target), **opts)
+                add_edge(graph, node.name, target, action.port)
 
         for part in node.parts:
-            opts = dict(tailport=part.port)
-            if isinstance(part.target, Node):
-                opts['headport'] = 0
-            graph.add_edge(node.name, str(part.target), **opts)
+            if part.target:
+                add_edge(graph, node.name, part.target, part.port)
 
 
 class Diagram:

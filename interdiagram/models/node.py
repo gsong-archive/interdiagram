@@ -58,7 +58,7 @@ class Part(NodeAttribute):
             node: 'Node'
     ) -> None:
         super().__init__(spec, port, node)
-        self._target = self._targets or self.name
+        self._target = self._targets or None
 
     @property
     def target(self) -> LooseNode:
