@@ -5,9 +5,7 @@ from typing import List, TYPE_CHECKING, Tuple, Union
 from pygraphviz import AGraph
 
 from ..typing import NodeAttr
-from .options import (
-    EDGE_OPTIONS, FONT_BOLD, HEADER_COLOR, LAYOUT, NODE_OPTIONS
-)
+from .options import *
 
 if TYPE_CHECKING:
     from ..diagram import Diagram  # noqa: F401
@@ -26,7 +24,7 @@ def _add_edge(
     if isinstance(target, Node):
         opts['headport'] = 0
     else:
-        graph.add_node(target, **NODE_OPTIONS)
+        graph.add_node(target, **AD_HOC_NODE_OPTIONS)
     graph.add_edge(source, str(target), **opts)
 
 
@@ -35,7 +33,7 @@ def _render_node_headers(node: 'Node') -> Tuple[str, str]:
         '<TR><TD ALIGN="LEFT" COLSPAN="2">'
         '<FONT COLOR="{}">{{}}:</FONT>'
         '</TD></TR>'
-    ).format(HEADER_COLOR)
+    ).format(GRAY)
 
     actions_header = ''
     if node.actions:
@@ -78,10 +76,11 @@ def draw(
         diagram: 'Diagram',
         output_file: 'str'
 ) -> None:
-    G = AGraph(directed=True, strict=False, rankdir='LR')
-    node_opts = dict(shape='none', **NODE_OPTIONS)
-    for node in diagram.all_nodes.values():
-        G.add_node(node.name, label=node.render(), **node_opts)
+    G = AGraph(**GRAPH_OPTIONS)
+    for node in diagram.components.values():
+        G.add_node(node.name, label=node.render(), **COMPONENT_OPTIONS)
+    for node in diagram.sections.values():
+        G.add_node(node.name, label=node.render(), **SECTION_OPTIONS)
     add_edges(G, diagram)
     G.write()
     G.draw(output_file, prog=LAYOUT)

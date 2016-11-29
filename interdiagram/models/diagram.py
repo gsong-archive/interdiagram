@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from typing import Dict, TYPE_CHECKING
+from typing import Dict
 
-from .node import Component, Section
+from .node import Node
 from .utils.graph import draw
-
-if TYPE_CHECKING:
-    from .node import Node  # noqa: F401
 
 
 class Diagram:
@@ -25,14 +22,14 @@ class Diagram:
             name: str,
             spec: Dict
     ) -> None:
-        self.components[name] = Component(name, spec, self)
+        self.components[name] = Node(name, spec, self)
 
     def add_section(
             self,
             name: str,
             spec: Dict
     ) -> None:
-        self.sections[name] = Section(name, spec, self)
+        self.sections[name] = Node(name, spec, self)
 
     def draw(
             self,

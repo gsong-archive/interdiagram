@@ -115,11 +115,3 @@ class Node:
     def render(self) -> str:
         output = render_node(self)
         return output
-
-
-class Component(Node):
-    pass
-
-
-class Section(Node):
-    pass
