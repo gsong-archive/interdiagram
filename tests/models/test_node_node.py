@@ -81,5 +81,15 @@ def test_render(mocker):
         return_value=[MockAction(), MockAction()]
     )
     node = Node('a', {}, 'diagram')
-    expected = '<<TABLE><TR><TD PORT="0">a</TD></TR><action><action></TABLE>>'
+    expected = (
+        '<<TABLE BORDER="0" ROWS="*">'
+        '<TR><TD PORT="0" ALIGN="CENTER" COLSPAN="2">'
+        '<FONT FACE="helvetica bold">a</FONT>'
+        '</TD></TR>'
+        '<TR><TD ALIGN="LEFT" COLSPAN="2">'
+        '<FONT COLOR="9">Actions:</FONT>'
+        '</TD></TR>'
+        '<action><action>'
+        '</TABLE>>'
+    )
     assert node.render() == expected

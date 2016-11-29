@@ -67,5 +67,5 @@ class TestTargets:
 def test_render():
     spec = {'a': [1]}
     action = Action(spec, 1, 'x')
-    expected = '<TR><TD PORT="1">a</TD></TR>'
+    expected = '<TR><TD></TD><TD PORT="1" ALIGN="LEFT">a</TD></TR>'
     assert action.render() == expected

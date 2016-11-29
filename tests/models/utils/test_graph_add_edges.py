@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
+from pygraphviz import AGraph
 import pytest
 
-from interdiagram.models.diagram import add_edge, add_edges
 from interdiagram.models.node import Node
-from pygraphviz import AGraph
+from interdiagram.models.utils.graph import _add_edge, add_edges
+from interdiagram.models.utils.options import *
 
 
 @pytest.fixture
@@ -22,24 +23,26 @@ class TestAddEdge:
         target = Node(name, {}, 'diagram')
         tailport = 1
 
-        add_edge(AGraph(), source, target, tailport)
-        mock_graph_add_edge.assert_called_once_with(
-            source, name, tailport=tailport, headport=0
-        )
+        _add_edge(AGraph(), source, target, tailport)
+        options = dict(tailport=tailport, headport=0, **EDGE_OPTIONS)
+        mock_graph_add_edge.assert_called_once_with(source, name, **options)
 
-    def test_str_target(self, mock_graph_add_edge):
+    def test_str_target(self, mock_graph_add_edge, mocker):
+        mock_graph_add_node = mocker.patch('pygraphviz.AGraph.add_node')
         source = 'source'
         target = 'target'
         tailport = 1
 
-        add_edge(AGraph(), source, target, tailport)
-        mock_graph_add_edge.assert_called_once_with(
-            source, target, tailport=tailport
+        _add_edge(AGraph(), source, target, tailport)
+        opts = dict(tailport=tailport, **EDGE_OPTIONS)
+        mock_graph_add_node.assert_called_once_with(
+            target, **AD_HOC_NODE_OPTIONS
         )
+        mock_graph_add_edge.assert_called_once_with(source, target, **opts)
 
 
 def test_add_edges(diagram, mocker):
-    mock_add_edge = mocker.patch('interdiagram.models.diagram.add_edge')
+    mock_add_edge = mocker.patch('interdiagram.models.utils.graph._add_edge')
     add_edges('graph', diagram)
     assert mock_add_edge.call_count == 10
 
