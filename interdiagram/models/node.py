@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
-from typing import (
-    Callable, Dict, List, Optional, TYPE_CHECKING, TypeVar, Union
-)
+from typing import Callable, Dict, List, Optional, TYPE_CHECKING, Union
+
+from .typing import NodeAttr
+from .utils.graph import render_node, render_node_attribute
 
 if TYPE_CHECKING:
     from .diagram import Diagram  # noqa: F401
 
 LooseNode = Union[str, 'Node']
-NodeAttr = TypeVar('NodeAttr', 'Action', 'Part')
 
 
 def _map_list_to_nodes(
@@ -37,7 +37,7 @@ class NodeAttribute:
         self.node = node
 
     def render(self) -> str:
-        output = '<TR><TD PORT="{0.port}">{0.name}</TD></TR>'.format(self)
+        output = render_node_attribute(self.name, self.port)
         return output
 
 
@@ -113,10 +113,7 @@ class Node:
         return self._parts
 
     def render(self) -> str:
-        name = '<TR><TD PORT="0">{}</TD></TR>'.format(self.name)
-        actions = ''.join([a.render() for a in self.actions])
-        parts = ''.join([a.render() for a in self.parts])
-        output = '<<TABLE>{name}{parts}{actions}</TABLE>>'.format(**locals())
+        output = render_node(self)
         return output
 
 

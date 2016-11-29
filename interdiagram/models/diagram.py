@@ -1,36 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from typing import Dict, Union
+from typing import Dict, TYPE_CHECKING
 
-from pygraphviz import AGraph
+from .node import Component, Section
+from .utils.graph import draw
 
-from .node import Component, Node, Section
-
-
-def add_edge(
-        graph: 'AGraph',
-        source: str,
-        target: Union['Node', str],
-        tailport: int
-) -> None:
-    opts = dict(tailport=tailport)
-    if isinstance(target, Node):
-        opts['headport'] = 0
-    graph.add_edge(source, str(target), **opts)
-
-
-def add_edges(
-        graph: 'AGraph',
-        diagram: 'Diagram'
-) -> None:
-    for node in diagram.all_nodes.values():
-        for action in node.actions:
-            for target in action.targets:
-                add_edge(graph, node.name, target, action.port)
-
-        for part in node.parts:
-            if part.target:
-                add_edge(graph, node.name, part.target, part.port)
+if TYPE_CHECKING:
+    from .node import Node  # noqa: F401
 
 
 class Diagram:
@@ -62,12 +38,7 @@ class Diagram:
             self,
             output_file: str
     ) -> None:  # pragma: no cover
-        G = AGraph(directed=True, strict=False, rankdir='LR')
-        for node in self.all_nodes.values():
-            G.add_node(node.name, label=node.render(), shape='none')
-        add_edges(G, self)
-        G.write()
-        G.draw(output_file, prog='dot')
+        draw(self, output_file)
 
     def process_spec(
             self,
