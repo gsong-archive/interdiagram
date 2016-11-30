@@ -48,6 +48,14 @@ def test_all_nodes(diagram):
     assert diagram.all_nodes == expected
 
 
+def test_draw(mocker):
+    mock_draw = mocker.patch('interdiagram.models.diagram.draw')
+    of = 'output.pdf'
+    d = Diagram()
+    d.draw(of)
+    mock_draw.assert_called_once_with(d, of)
+
+
 class TestProcessSpec:
     def test_with_components_and_sections(
             self, diagram, mock_add_component, mock_add_section

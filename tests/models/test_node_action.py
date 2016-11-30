@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import pytest
+
 from interdiagram.models.node import Action
 
 
@@ -12,25 +14,20 @@ def _prep_action(
     return spec, node, action
 
 
-class TestInit:
-    port = 1
+@pytest.mark.parametrize('targets, expected', [
+    ([1],) * 2,
+    ([1, 2],) * 2,
+    (None, []),
+])
+def test_init(targets, expected):
     node = 'x'
-
-    def test_init(self):
-        spec = {'a': [1]}
-        action = Action(spec, self.port, self.node)
-        assert action.name == 'a'
-        assert action._targets == [1]
-        assert action.port == self.port
-        assert action.node == self.node
-
-    def test_empty_spec(self):
-        spec = {'a': None}
-        action = Action(spec, self.port, self.node)
-        assert action.name == 'a'
-        assert action._targets == []
-        assert action.port == self.port
-        assert action.node == self.node
+    port = 1
+    spec = {'a': targets}
+    action = Action(spec, port, node)
+    assert action.name == 'a'
+    assert action._targets == expected
+    assert action.port == port
+    assert action.node == node
 
 
 class TestTargets:

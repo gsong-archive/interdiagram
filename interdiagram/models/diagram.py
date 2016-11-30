@@ -34,7 +34,7 @@ class Diagram:
     def draw(
             self,
             output_file: str
-    ) -> None:  # pragma: no cover
+    ) -> None:
         draw(self, output_file)
 
     def process_spec(
