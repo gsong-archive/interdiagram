@@ -4,7 +4,7 @@
 from pathlib import Path
 import re
 
-from setuptools import setup
+from setuptools import find_packages, setup
 
 
 def get_content(*fps):
@@ -71,7 +71,7 @@ setup(
     ],
     keywords='interaction diagram sitemap',
 
-    packages=['interdiagram'],
+    packages=find_packages(),
     install_requires=get_requirements(),
 
     entry_points={
