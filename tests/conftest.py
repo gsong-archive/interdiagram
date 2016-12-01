@@ -8,8 +8,8 @@ import yaml
 from interdiagram.models.diagram import Diagram
 
 HERE = Path(__file__).parent
-INPUT1 = HERE.joinpath('data/data1.yaml')
-INPUT2 = HERE.joinpath('data/data2.yaml')
+INPUT1 = HERE / 'data/data1.yaml'
+INPUT2 = HERE / 'data/data2.yaml'
 
 
 def _load(p):

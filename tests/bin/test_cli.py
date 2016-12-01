@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
-from tempfile import gettempdir
+from tempfile import TemporaryDirectory
 
 from click.testing import CliRunner
 
 from interdiagram.bin.interdiagram import cli
-
-OUTPUT = Path(gettempdir()).resolve().joinpath('o.pdf').as_posix()
 
 
 def test_cli(input1, input2, input1_data, input2_data, mocker):
@@ -17,11 +15,14 @@ def test_cli(input1, input2, input1_data, input2_data, mocker):
     )
     mock_draw = mocker.patch('interdiagram.bin.interdiagram.Diagram.draw')
 
-    args = [input1, input2, OUTPUT]
-    result = runner.invoke(cli, args)
+    with TemporaryDirectory() as _tmpdir:
+        tmpdir = Path(_tmpdir).resolve()
+        output = (tmpdir / 'o.pdf').as_posix()
+        args = [input1, input2, output]
+        result = runner.invoke(cli, args)
 
-    assert result.exit_code == 0
-    assert mock_process_spec.call_count == 2
-    mock_process_spec.assert_any_call(input1_data)
-    mock_process_spec.assert_called_with(input2_data)
-    mock_draw.assert_called_once_with(OUTPUT)
+        assert result.exit_code == 0
+        assert mock_process_spec.call_count == 2
+        mock_process_spec.assert_any_call(input1_data)
+        mock_process_spec.assert_called_with(input2_data)
+        mock_draw.assert_called_once_with(output)
