@@ -8,7 +8,7 @@ from click.testing import CliRunner
 from interdiagram.bin.interdiagram import cli
 
 
-def test_cli(input1, input2, input1_data, input2_data, mocker):
+def test_files(input1, input2, input1_data, input2_data, mocker):
     runner = CliRunner()
     mock_process_spec = mocker.patch(
         'interdiagram.bin.interdiagram.Diagram.process_spec'
@@ -18,7 +18,7 @@ def test_cli(input1, input2, input1_data, input2_data, mocker):
     with TemporaryDirectory() as _tmpdir:
         tmpdir = Path(_tmpdir).resolve()
         output = (tmpdir / 'o.pdf').as_posix()
-        args = [input1, input2, output]
+        args = ['files', input1, input2, output]
         result = runner.invoke(cli, args)
 
         assert result.exit_code == 0

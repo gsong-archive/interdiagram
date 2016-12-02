@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from interdiagram.models.node import Node
+from interdiagram.models.utils.options import DARK_GRAY, NODE_HEADER_COLOR
 
 
 class MockAction:
@@ -86,10 +87,10 @@ def test_render(mocker):
         '<TR><TD PORT="0" ALIGN="CENTER" COLSPAN="2">'
         '<FONT FACE="helvetica bold">a</FONT>'
         '</TD></TR>'
-        '<TR><TD ALIGN="LEFT" COLSPAN="2">'
-        '<FONT COLOR="9">Actions:</FONT>'
+        '<TR><TD ALIGN="LEFT" COLSPAN="2" BGCOLOR="{}">'
+        '<FONT COLOR="{}">Actions:</FONT>'
         '</TD></TR>'
         '<action><action>'
         '</TABLE>>'
-    )
+    ).format(NODE_HEADER_COLOR, DARK_GRAY)
     assert node.render() == expected
