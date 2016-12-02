@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
 # Colors
-COLOR_SCHEME = 'set19'
-COLOR1 = 2
-COLOR2 = 1
-COLOR3 = 4
-GRAY = 9
+COLOR_SCHEME = 'X11'
+COLOR1 = 'dodgerblue2'
+COLOR2 = 'firebrick2'
+COLOR3 = 'purple2'
+GRAY = 'gray50'
+DARK_GRAY = 'gray30'
+NODE_HEADER_COLOR = 'azure'
 
 # General options
 FONT = 'helvetica'

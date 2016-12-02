@@ -30,10 +30,10 @@ def _add_edge(
 
 def _render_node_headers(node: 'Node') -> Tuple[str, str]:
     template = (
-        '<TR><TD ALIGN="LEFT" COLSPAN="2">'
+        '<TR><TD ALIGN="LEFT" COLSPAN="2" BGCOLOR="{}">'
         '<FONT COLOR="{}">{{}}:</FONT>'
         '</TD></TR>'
-    ).format(GRAY)
+    ).format(NODE_HEADER_COLOR, DARK_GRAY)
 
     actions_header = ''
     if node.actions:
